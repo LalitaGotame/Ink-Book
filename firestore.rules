@@ -1,0 +1,23 @@
+rules_version = '2';
+
+// Only the studio team can read or change anything.
+// Put the two team emails below before publishing these rules in the Firebase console.
+// The live rules in Firebase hold the real emails; this copy keeps placeholders so they aren't public.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isTeam() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower() in [
+          'first-team-member@example.com',
+          'second-team-member@example.com'
+        ];
+    }
+
+    match /{collection}/{docId} {
+      allow read, write: if isTeam()
+        && collection in ['clients', 'sessions', 'payments', 'stock', 'expenses', 'settings', 'photos'];
+    }
+  }
+}

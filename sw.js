@@ -1,5 +1,5 @@
 // App shell cache: network first, cached copy when offline. Bookings themselves sync through Firebase.
-const CACHE = "ink-book-v1";
+const CACHE = "ink-book-v2";
 const FILES = ["./", "index.html", "app.js", "firebase-config.js", "manifest.json", "icon-180.png", "icon-192.png", "icon-512.png",
   "vendor/firebase-app-compat.js", "vendor/firebase-auth-compat.js", "vendor/firebase-firestore-compat.js"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())); });

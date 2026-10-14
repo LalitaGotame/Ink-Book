@@ -205,11 +205,14 @@ function authShell(inner) { closeSheet(); $("app").innerHTML = '<div class="wrap
 function showAuth(mode) {
   mode = mode || "in";
   authShell('<h1>Ink Book</h1><p>' + (mode === "in" ? "Sign in to see your bookings." : "Create your account. You'll get an email to confirm it.") + "</p>" +
-    '<form id="authForm" novalidate><div class="field"><label for="aEmail">Email</label><input class="inp" id="aEmail" type="email" autocomplete="email" required></div>' +
-    '<div class="field"><label for="aPass">Password</label><input class="inp" id="aPass" type="password" autocomplete="' + (mode === "in" ? "current-password" : "new-password") + '" minlength="6" required></div>' +
+    '<form id="authForm" novalidate><div class="field"><label for="aEmail">Email</label><input class="inp" id="aEmail" type="email" autocomplete="email" autocapitalize="off" autocorrect="off" spellcheck="false" required></div>' +
+    '<div class="field"><label for="aPass">Password</label><input class="inp" id="aPass" type="password" autocomplete="' + (mode === "in" ? "current-password" : "new-password") + '" autocapitalize="off" autocorrect="off" minlength="6" required>' +
+    '<label style="display:flex;gap:8px;align-items:center;font-weight:600;font-size:14px"><input type="checkbox" id="aShow"> Show password</label>' +
+    (mode === "up" ? '<p class="hint">Write this password down. If iPhone offers a "Strong Password", tap "Other Options" → "Choose My Own Password" so you know what it is.</p>' : "") + "</div>" +
     '<p class="err" id="aErr"></p><div class="btns"><button class="btn primary" type="submit" style="flex:1">' + (mode === "in" ? "Sign in" : "Create account") + "</button></div></form>" +
     '<div class="btns" style="margin-top:12px;justify-content:space-between">' +
     (mode === "in" ? '<button class="btn ghost small" id="toUp">New here? Create account</button><button class="btn ghost small" id="forgot">Forgot password</button>' : '<button class="btn ghost small" id="toIn">I already have an account</button>') + "</div>");
+  $("aShow").onchange = function () { $("aPass").type = this.checked ? "text" : "password"; };
   $("authForm").onsubmit = function (e) {
     e.preventDefault();
     var em = $("aEmail").value.trim(), pw = $("aPass").value;
@@ -230,7 +233,8 @@ function authError(err) {
   if (c.indexOf("invalid-email") >= 0) return "That email address doesn't look right.";
   if (c.indexOf("weak-password") >= 0) return "Use a password with at least 6 characters.";
   if (c.indexOf("email-already-in-use") >= 0) return "There's already an account with this email. Sign in instead.";
-  if (c.indexOf("invalid-credential") >= 0 || c.indexOf("wrong-password") >= 0 || c.indexOf("user-not-found") >= 0) return "Email or password is wrong.";
+  if (c.indexOf("invalid-credential") >= 0 || c.indexOf("wrong-password") >= 0 || c.indexOf("user-not-found") >= 0) return "Email or password is wrong. Tap Show password to check it, or tap Forgot password to set a new one.";
+  if (c.indexOf("operation-not-allowed") >= 0) return "Email sign-in isn't switched on in Firebase yet (Authentication → Sign-in method → Email/Password).";
   if (c.indexOf("network") >= 0) return "No internet connection. Try again when you're online.";
   if (c.indexOf("too-many-requests") >= 0) return "Too many tries. Wait a few minutes and try again.";
   return "Something went wrong (" + c + "). Try again.";
